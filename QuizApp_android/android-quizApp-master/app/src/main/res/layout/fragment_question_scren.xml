@@ -1,0 +1,62 @@
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.samsung.msf2.quizapp.QuestionScrenFragment"
+        android:background="@drawable/back1">
+
+        <TextView android:text="@string/questionNo"
+            android:id="@+id/questionnoid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="20dp"
+            android:textColor="#ffa500"
+            />
+
+    <TextView android:text="@string/question"
+        android:id="@+id/questionfragid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/questionnoid"
+        android:textColor="#ffa500"
+        />
+
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/optionRadioGroupId"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/questionfragid"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/option1FragId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/option1"
+                android:textColor="#ffa500"
+                />
+
+            <RadioButton android:id="@+id/option2FragId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/option2"
+                android:textColor="#ffa500"
+                />
+
+            <RadioButton android:id="@+id/option3FragId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/option3"
+                android:textColor="#ffa500"
+                />
+
+            <RadioButton android:id="@+id/option4FragId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/option4"
+                android:textColor="#ffa500"
+                />
+        </RadioGroup>
+
+    </RelativeLayout>

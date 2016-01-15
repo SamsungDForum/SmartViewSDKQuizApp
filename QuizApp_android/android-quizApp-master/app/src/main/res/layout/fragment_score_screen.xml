@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back1"
+    tools:context="com.samsung.msf2.quizapp.ScoreScreenFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/scoreLabelId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/score"
+        android:textColor="#ffa500"
+        />
+
+    <TextView
+        android:id="@+id/scoreValueId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/scoreLabelId"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:text="@string/your_score"
+        android:textColor="#ffa500"
+        />
+
+    <Button
+        android:id="@+id/playAgainId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="       Play Again      "
+        android:background="@drawable/some_row_background"
+        android:layout_below="@+id/scoreValueId"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:textColor="#ffa500"
+        android:textAllCaps="false"
+        />
+
+    <Button
+        android:id="@+id/doneId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="          Done          "
+        android:background="@drawable/some_row_background"
+        android:textColor="#ffa500"
+        android:layout_below="@+id/playAgainId"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textAllCaps="false"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,18 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back1"
+    tools:context="com.samsung.msf2.quizapp.WaitScreenFragment">
+
+    <TextView
+        android:id="@+id/waitMsgId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_centerHorizontal="true"
+        android:text="@string/wait"
+        android:layout_marginLeft="40dp"
+        android:textColor="#ffa500"
+        />
+
+</FrameLayout>

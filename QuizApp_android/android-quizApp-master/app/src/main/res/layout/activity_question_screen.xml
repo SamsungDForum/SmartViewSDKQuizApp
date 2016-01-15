@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.samsung.msf2.quizapp.QuestionScreenActivity">
+
+        <TextView android:text="@string/question"
+                  android:id="@+id/questionid"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="50dp"
+                  android:layout_marginLeft="20dp"
+        />
+
+    <TextView android:text="@string/option1"
+              android:id="@+id/option1id"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="10dp"
+              android:layout_marginLeft="20dp"
+              android:layout_below="@+id/questionid"
+        />
+
+    <TextView android:text="@string/option2"
+             android:id="@+id/option2id"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="10dp"
+             android:layout_marginLeft="20dp"
+             android:layout_below="@+id/option1id"
+        />
+
+    <TextView android:text="@string/option3"
+        android:id="@+id/option3id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/option2id"
+        />
+
+    <TextView android:text="@string/option4"
+        android:id="@+id/option4id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/option3id"
+        />
+
+</RelativeLayout>

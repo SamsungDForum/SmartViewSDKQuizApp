@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns:tizen="http://tizen.org/ns/widgets" xmlns="http://www.w3.org/ns/widgets" id="http://yourdomain/quizApp" version="1.0.0" viewmodes="maximized">
+    <access origin="*"></access>
+    <tizen:application id="spYwHAao89.quizApp" package="spYwHAao89" required_version="2.3"/>
+    <content src="index.html"/>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+    <feature name="http://tizen.org/feature/network.wifi"/>
+    <icon src="icon.png"/>
+    <name>quizApp</name>
+    <tizen:profile name="tv"/>
+</widget>

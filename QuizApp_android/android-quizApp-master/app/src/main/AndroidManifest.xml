@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.samsung.msf2.quizapp" >
+
+    <uses-permission
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        android:required="true" />
+    <uses-permission
+        android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"
+        android:required="true" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DeviceList"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <!--
+            <activity
+            android:name="com.nitishnihar.msf2.quizapp.About"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.nitishnihar.msf2.quizapp.ClientChatActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize|adjustPan" >
+        </activity>
+        -->
+        <activity
+            android:name=".ChoosePlayerActivity"
+            android:label="@string/title_activity_choose_player"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".PlayClientCatActivity"
+            android:label="@string/title_activity_play_client_cat" >
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".QuestionScreenActivity"
+            android:label="@string/title_activity_question_screen" >
+        </activity>
+        <activity
+            android:name=".ThankyouActivity"
+            android:label="@string/title_activity_thankyou" >
+        </activity>
+    </application>
+
+</manifest>

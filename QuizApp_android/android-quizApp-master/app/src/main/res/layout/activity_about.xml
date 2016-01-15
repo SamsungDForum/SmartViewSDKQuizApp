@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samsung.msf2.quizapp.AboutActivity"
+    android:layout_margin="10dp"
+    android:background="@drawable/back1">
+
+    <TextView
+        android:id="@+id/title"
+        android:text="About Us"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="#ffa500"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_margin="10dp"
+        android:text="This is a Simple Quiz application between different Tv and clients.Connected within the same Network."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#ffa500"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        android:layout_centerInParent="true" />
+
+    <TextView
+        android:id="@+id/txt_Version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Version 2.0"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:textColor="#ffa500"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

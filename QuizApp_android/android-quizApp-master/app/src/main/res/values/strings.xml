@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">MSF Quiz APP</string>
+    <string name="device_list">Connect to TV</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="version">Version 2.0</string>
+    <string name="developer">Developer -- Abhinaw Tripathi</string>
+    <string name="thanks">Thanks -- Rahul</string>
+    <string name="copyright">&#169; 2015 Samsung Electronics Co.Ltd.</string>
+    <string name="about">
+        This application uses exposed APIs of MSF version 2.
+        It provides user an easy way to connect with TV and perform\ntasks like\n\n
+        -- launching,terminating,installing a TV cloud app or installed app\n\n
+        -- send messages to TV,a specific client,\na group of clients and even to self.
+    </string>
+    <string name="title_activity_about">AboutActivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_choose_player">Select Player</string>
+    <string name="title_activity_play_client_cat">Client List</string>
+    <string name="title_activity_question_screen">QuestionScreenActivity</string>
+    <string name="question">Question</string>
+    <string name="option1">Option1</string>
+    <string name="option2">Option2</string>
+    <string name="option3">Option3</string>
+    <string name="option4">Option4</string>
+    <string name="score">Score</string>
+    <string name="your_score">Your score</string>
+    <string name="title_activity_thankyou">ThankyouActivity</string>
+    <string name="thankyou">Thank you</string>
+    <string name="wait">Waiting for response...</string>
+    <string name="play_with_client">Do you want to play with client?</string>
+    <string name="questionNo">Question No.</string>
+</resources>
