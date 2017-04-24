@@ -19,29 +19,29 @@ class CategoryViewController : UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.title = "Quiz App"
-        Category1Button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        Category1Button.backgroundColor = UIColor.whiteColor()
+        Category1Button.setTitleColor(UIColor.white, for: UIControlState())
+        Category1Button.backgroundColor = UIColor.white
         Category1Button.layer.cornerRadius = 8
-        Category1Button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
+        Category1Button.setTitleColor(UIColor.orange, for: UIControlState())
         
-        Category2Button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        Category2Button.backgroundColor = UIColor.whiteColor()
+        Category2Button.setTitleColor(UIColor.white, for: UIControlState())
+        Category2Button.backgroundColor = UIColor.white
         Category2Button.layer.cornerRadius = 8
-        Category2Button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
+        Category2Button.setTitleColor(UIColor.orange, for: UIControlState())
         
-        Category3Button.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        Category3Button.backgroundColor = UIColor.whiteColor()
+        Category3Button.setTitleColor(UIColor.white, for: UIControlState())
+        Category3Button.backgroundColor = UIColor.white
         Category3Button.layer.cornerRadius = 8
-        Category3Button.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
+        Category3Button.setTitleColor(UIColor.orange, for: UIControlState())
         
-        let buttonBack: UIButton = UIButton(type: UIButtonType.Custom)
-        buttonBack.frame = CGRectMake(5, 5, 30, 30)
-        buttonBack.setImage(UIImage(named:"backImage.png"), forState:UIControlState.Normal)
-        buttonBack.addTarget(self, action: "leftNavButtonClick:", forControlEvents: UIControlEvents.TouchUpInside)
+        let buttonBack: UIButton = UIButton(type: UIButtonType.custom)
+        buttonBack.frame = CGRect(x: 5, y: 5, width: 30, height: 30)
+        buttonBack.setImage(UIImage(named:"backImage.png"), for:UIControlState())
+        buttonBack.addTarget(self, action: #selector(CategoryViewController.leftNavButtonClick(_:)), for: UIControlEvents.touchUpInside)
         
         let leftBarButtonItem: UIBarButtonItem = UIBarButtonItem(customView: buttonBack)
-        self.navigationItem.setLeftBarButtonItem(leftBarButtonItem, animated: true)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "stateBusyAction2:", name: "stateBusy", object: nil)
+        self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
+        NotificationCenter.default.addObserver(self, selector: #selector(CategoryViewController.stateBusyAction2(_:)), name: NSNotification.Name(rawValue: "stateBusy"), object: nil)
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "back1.jpg")!)
     }
     
@@ -51,17 +51,17 @@ class CategoryViewController : UIViewController
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillDisappear(animated: Bool)
+    override func viewWillDisappear(_ animated: Bool)
     {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: "stateBusyAction2", object: nil)  //1234
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "stateBusyAction2"), object: nil)  //1234
     }
     
-    func leftNavButtonClick(sender:UIButton!)
+    func leftNavButtonClick(_ sender:UIButton!)
     {
         let  dic:NSDictionary  = ["session":"end"]
         do {
-            let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-            let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+            let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+            let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
             print("data is \(dataString)")
             ShareController.sharedInstance.SendToHost(dataString!)
             let viewControllers:[UIViewController] = self.navigationController!.viewControllers 
@@ -74,25 +74,25 @@ class CategoryViewController : UIViewController
         
     }
 
-    @IBAction func Category1ButtonAction(sender: AnyObject)
+    @IBAction func Category1ButtonAction(_ sender: AnyObject)
     {
         let  dic:NSDictionary  = ["categoryType":"Sports"]
         do {
-            let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-            let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+            let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+            let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
             print("data is \(dataString)")
             ShareController.sharedInstance.SendToHost(dataString!)
         
             if(ShareController.sharedInstance.getPlayerType() == "Single")
             {
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let questionScreenViewController = storyBoard.instantiateViewControllerWithIdentifier("questionScreenView") as! QuestionScreenViewController
+                let questionScreenViewController = storyBoard.instantiateViewController(withIdentifier: "questionScreenView") as! QuestionScreenViewController
                 self.navigationController?.pushViewController(questionScreenViewController, animated: true)
             }
             else
             {
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let WaitScreenViewController = storyBoard.instantiateViewControllerWithIdentifier("waitScreenView") as! waitScreenController
+                let WaitScreenViewController = storyBoard.instantiateViewController(withIdentifier: "waitScreenView") as! waitScreenController
             
                 self.navigationController?.pushViewController(WaitScreenViewController, animated: true)
             }
@@ -103,25 +103,25 @@ class CategoryViewController : UIViewController
         }
     }
     
-    @IBAction func Category2ButtonAction(sender: AnyObject)
+    @IBAction func Category2ButtonAction(_ sender: AnyObject)
     {
         let  dic:NSDictionary  = ["categoryType":"Science"]
         do {
-        let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-        let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+        let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+        let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
         print("data is \(dataString)")
         ShareController.sharedInstance.SendToHost(dataString!)
         
             if(ShareController.sharedInstance.getPlayerType() == "Single")
             {
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let questionScreenViewController = storyBoard.instantiateViewControllerWithIdentifier("questionScreenView") as! QuestionScreenViewController
+                let questionScreenViewController = storyBoard.instantiateViewController(withIdentifier: "questionScreenView") as! QuestionScreenViewController
                 self.navigationController?.pushViewController(questionScreenViewController, animated: true)
             }
             else
             {
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let WaitScreenViewController = storyBoard.instantiateViewControllerWithIdentifier("waitScreenView") as! waitScreenController
+                let WaitScreenViewController = storyBoard.instantiateViewController(withIdentifier: "waitScreenView") as! waitScreenController
                 self.navigationController?.pushViewController(WaitScreenViewController, animated: true)
             }
         }
@@ -131,25 +131,25 @@ class CategoryViewController : UIViewController
         }
     }
     
-    @IBAction func Category3ButtonAction(sender: AnyObject)
+    @IBAction func Category3ButtonAction(_ sender: AnyObject)
     {
         let  dic:NSDictionary  = ["categoryType":"History"]
         do {
-        let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-        let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+        let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+        let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
         print("data is \(dataString)")
         ShareController.sharedInstance.SendToHost(dataString!)
         
             if(ShareController.sharedInstance.getPlayerType() == "Single")
             {
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let questionScreenViewController = storyBoard.instantiateViewControllerWithIdentifier("questionScreenView") as! QuestionScreenViewController
+                let questionScreenViewController = storyBoard.instantiateViewController(withIdentifier: "questionScreenView") as! QuestionScreenViewController
                 self.navigationController?.pushViewController(questionScreenViewController, animated: true)
             }
             else
             {
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let WaitScreenViewController = storyBoard.instantiateViewControllerWithIdentifier("waitScreenView") as! waitScreenController
+                let WaitScreenViewController = storyBoard.instantiateViewController(withIdentifier: "waitScreenView") as! waitScreenController
                 self.navigationController?.pushViewController(WaitScreenViewController, animated: true)
             }
         }
@@ -160,11 +160,11 @@ class CategoryViewController : UIViewController
     }
     
     
-    func stateBusyAction2(notification : NSNotification!)
+    func stateBusyAction2(_ notification : Notification!)
     {
-        let alertView = UIAlertController(title: "QuizApp", message: "Host Busy!! Please try again later...", preferredStyle: .Alert)
-        alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
-        presentViewController(alertView, animated: true, completion: nil)
+        let alertView = UIAlertController(title: "QuizApp", message: "Host Busy!! Please try again later...", preferredStyle: .alert)
+        alertView.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alertView, animated: true, completion: nil)
     }
     
     

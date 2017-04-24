@@ -17,13 +17,13 @@ import UIKit
     is called with a nil.
     
     */
-    optional func didSelectButton(aButton: UIButton?)
+    @objc optional func didSelectButton(_ aButton: UIButton?)
 }
 
 class SSRadioButtonsController : NSObject
 {
-    private var buttonsArray = [UIButton]()
-    private weak var currentSelectedButton:UIButton? = nil
+    fileprivate var buttonsArray = [UIButton]()
+    fileprivate weak var currentSelectedButton:UIButton? = nil
     weak var delegate : SSRadioButtonControllerDelegate? = nil
     /**
     Set whether a selected radio button can be deselected or not. Default value is false.
@@ -37,7 +37,7 @@ class SSRadioButtonsController : NSObject
     init(buttons: UIButton...) {
         super.init()
         for aButton in buttons {
-            aButton.addTarget(self, action: "pressed:", forControlEvents: UIControlEvents.TouchUpInside)
+            aButton.addTarget(self, action: #selector(SSRadioButtonsController.pressed(_:)), for: UIControlEvents.touchUpInside)
         }
         self.buttonsArray = buttons
     }
@@ -46,19 +46,20 @@ class SSRadioButtonsController : NSObject
     
     :param: button Add the button to controller.
     */
-    func addButton(aButton: UIButton) {
+    func addButton(_ aButton: UIButton) {
         buttonsArray.append(aButton)
-        aButton.addTarget(self, action: "pressed:", forControlEvents: UIControlEvents.TouchUpInside)
+        aButton.addTarget(self, action: #selector(SSRadioButtonsController.pressed(_:)), for: UIControlEvents.touchUpInside)
     }
     /**
     Remove a UIButton from controller.
     
     :param: button Button to be removed from controller.
     */
-    func removeButton(aButton: UIButton) {
-        var iteration = 0
+    func removeButton(_ aButton: UIButton) {
+        
+        var iteration = 0;
         var iteratingButton: UIButton? = nil
-        for( ; iteration<buttonsArray.count; iteration++) {
+        for iteration in 0 ..< buttonsArray.count {
             iteratingButton = buttonsArray[iteration]
             if(iteratingButton == aButton) {
                 break
@@ -67,8 +68,8 @@ class SSRadioButtonsController : NSObject
             }
         }
         if(iteratingButton != nil) {
-            buttonsArray.removeAtIndex(iteration)
-            iteratingButton!.removeTarget(self, action: "pressed:", forControlEvents: UIControlEvents.TouchUpInside)
+            buttonsArray.remove(at: iteration)
+            iteratingButton!.removeTarget(self, action: #selector(SSRadioButtonsController.pressed(_:)), for: UIControlEvents.touchUpInside)
             if currentSelectedButton == iteratingButton {
                 currentSelectedButton = nil
             }
@@ -79,32 +80,32 @@ class SSRadioButtonsController : NSObject
     
     :param: buttonArray Array of buttons
     */
-    func setButtonsArray(aButtonsArray: [UIButton]) {
+    func setButtonsArray(_ aButtonsArray: [UIButton]) {
         for aButton in aButtonsArray {
-            aButton.addTarget(self, action: "pressed:", forControlEvents: UIControlEvents.TouchUpInside)
+            aButton.addTarget(self, action: #selector(SSRadioButtonsController.pressed(_:)), for: UIControlEvents.touchUpInside)
         }
         buttonsArray = aButtonsArray
     }
     
-    func deselect(sender: UIButton)
+    func deselect(_ sender: UIButton)
     {
-        if(sender.selected)
+        if(sender.isSelected)
         {
-        sender.selected = false
+        sender.isSelected = false
         currentSelectedButton = nil
         }
     }
-    func pressed(sender: UIButton) {
-        if(sender.selected) {
+    func pressed(_ sender: UIButton) {
+        if(sender.isSelected) {
             if shouldLetDeSelect {
-                sender.selected = false
+                sender.isSelected = false
                 currentSelectedButton = nil
             }
         } else {
             for aButton in buttonsArray {
-                aButton.selected = false
+                aButton.isSelected = false
             }
-            sender.selected = true
+            sender.isSelected = true
             currentSelectedButton = sender
         }
         delegate?.didSelectButton?(currentSelectedButton)

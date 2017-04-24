@@ -20,10 +20,10 @@ class aboutScreenViewController : UIViewController, SSRadioButtonControllerDeleg
         
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "back1.jpg")!)
      
-        titlelabel.textColor = UIColor.orangeColor()
-        version.textColor = UIColor.whiteColor()
-       aboutText.backgroundColor = UIColor.whiteColor()
-        aboutText.textColor = UIColor.orangeColor()
+        titlelabel.textColor = UIColor.orange
+        version.textColor = UIColor.white
+       aboutText.backgroundColor = UIColor.white
+        aboutText.textColor = UIColor.orange
     }
     
     override func didReceiveMemoryWarning() {

@@ -19,24 +19,24 @@ class waitScreenController : UIViewController
     {
         super.viewDidLoad()
         self.navigationItem.title = "Quiz App"
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateQuestionMultiplayer:", name: "MultiplayerQuestionRecieved", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "showPlayerType:", name: "MultiplayerNORecieved", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(waitScreenController.updateQuestionMultiplayer(_:)), name: NSNotification.Name(rawValue: "MultiplayerQuestionRecieved"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(waitScreenController.showPlayerType(_:)), name: NSNotification.Name(rawValue: "MultiplayerNORecieved"), object: nil)
         
-        let buttonBack: UIButton = UIButton(type: UIButtonType.Custom)
-        buttonBack.frame = CGRectMake(5, 5, 30, 30)
-        buttonBack.setImage(UIImage(named:"backImage.png"), forState:UIControlState.Normal)
-        buttonBack.addTarget(self, action: "leftNavButtonClick:", forControlEvents: UIControlEvents.TouchUpInside)
+        let buttonBack: UIButton = UIButton(type: UIButtonType.custom)
+        buttonBack.frame = CGRect(x: 5, y: 5, width: 30, height: 30)
+        buttonBack.setImage(UIImage(named:"backImage.png"), for:UIControlState())
+        buttonBack.addTarget(self, action: #selector(waitScreenController.leftNavButtonClick(_:)), for: UIControlEvents.touchUpInside)
         
         let leftBarButtonItem: UIBarButtonItem = UIBarButtonItem(customView: buttonBack)
-        self.navigationItem.setLeftBarButtonItem(leftBarButtonItem, animated: true)
+        self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "back1.jpg")!)
-        waitinglabel.textColor = UIColor.orangeColor()
+        waitinglabel.textColor = UIColor.orange
     }
     
-    override func viewWillDisappear(animated: Bool)
+    override func viewWillDisappear(_ animated: Bool)
     {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: "MultiplayerQuestionRecieved", object: nil) //1234
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: "MultiplayerNORecieved", object: nil) //1234
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "MultiplayerQuestionRecieved"), object: nil) //1234
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "MultiplayerNORecieved"), object: nil) //1234
     }
     
     override func didReceiveMemoryWarning() {
@@ -45,12 +45,12 @@ class waitScreenController : UIViewController
         // Dispose of any resources that can be recreated.
     }
     
-    func leftNavButtonClick(sender:UIButton!)
+    func leftNavButtonClick(_ sender:UIButton!)
     {
         let  dic:NSDictionary  = ["changeCategory":"yes"]
         do {
-            let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-        let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+            let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+        let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
         print("data is \(dataString)")
         ShareController.sharedInstance.SendToHost(dataString!)
         let viewControllers:[UIViewController] = self.navigationController!.viewControllers 
@@ -62,14 +62,14 @@ class waitScreenController : UIViewController
         }
     }
     
-    func updateQuestionMultiplayer(notification: NSNotification!){
+    func updateQuestionMultiplayer(_ notification: Notification!){
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let questionScreenViewController = storyBoard.instantiateViewControllerWithIdentifier("questionScreenView") as! QuestionScreenViewController
+        let questionScreenViewController = storyBoard.instantiateViewController(withIdentifier: "questionScreenView") as! QuestionScreenViewController
         self.navigationController?.pushViewController(questionScreenViewController, animated: true)
         NSLog("EVENT MULTIPLAYQUESTION ")
     }
     
-    func showPlayerType(notification: NSNotification!)
+    func showPlayerType(_ notification: Notification!)
     {
         let viewControllers:[UIViewController] = self.navigationController!.viewControllers
         self.navigationController?.popToViewController(viewControllers[ 2], animated: true)//

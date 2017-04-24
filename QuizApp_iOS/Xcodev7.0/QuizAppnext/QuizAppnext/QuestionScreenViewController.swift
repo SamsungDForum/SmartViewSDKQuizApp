@@ -14,7 +14,7 @@ import UIKit
 
 class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDelegate {
         
-    var timer = NSTimer()
+    var timer = Timer()
     var counter = 0
     @IBOutlet weak var timerLabel: UILabel!
     @IBOutlet weak var optionAbutton: UIButton!
@@ -31,31 +31,31 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
             super.viewDidLoad()
             self.navigationItem.title = "Quiz App"
             
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateQuestion:", name: "questionRecieved", object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(QuestionScreenViewController.updateQuestion(_:)), name: NSNotification.Name(rawValue: "questionRecieved"), object: nil)
         //    NSNotificationCenter.defaultCenter().addObserver(self, selector: "sendLastAnswer:", name: "lastQuestionRecieved", object: nil)
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "scoreCard:", name: "scoreRecieved", object: nil)
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "showplayerTypeonSessionEnd:", name: "sessionEnd", object: nil)
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "sendResponse:", name: "sendAnswer", object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(QuestionScreenViewController.scoreCard(_:)), name: NSNotification.Name(rawValue: "scoreRecieved"), object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(QuestionScreenViewController.showplayerTypeonSessionEnd(_:)), name: NSNotification.Name(rawValue: "sessionEnd"), object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(QuestionScreenViewController.sendResponse(_:)), name: NSNotification.Name(rawValue: "sendAnswer"), object: nil)
             radioButtonController = SSRadioButtonsController(buttons: optionAbutton, optionBbutton, optionCbutton, optionDbutton)
             radioButtonController!.delegate = self
             radioButtonController!.shouldLetDeSelect = true
             
-            let buttonBack: UIButton = UIButton(type: UIButtonType.Custom)
-            buttonBack.frame = CGRectMake(5, 5, 30, 30)
-            buttonBack.setImage(UIImage(named:"backImage.png"), forState:UIControlState.Normal)
-            buttonBack.addTarget(self, action: "leftNavButtonClick:", forControlEvents: UIControlEvents.TouchUpInside)
+            let buttonBack: UIButton = UIButton(type: UIButtonType.custom)
+            buttonBack.frame = CGRect(x: 5, y: 5, width: 30, height: 30)
+            buttonBack.setImage(UIImage(named:"backImage.png"), for:UIControlState())
+            buttonBack.addTarget(self, action: #selector(QuestionScreenViewController.leftNavButtonClick(_:)), for: UIControlEvents.touchUpInside)
             
             let leftBarButtonItem: UIBarButtonItem = UIBarButtonItem(customView: buttonBack)
-            self.navigationItem.setLeftBarButtonItem(leftBarButtonItem, animated: true)
+            self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
             self.navigationItem.leftBarButtonItem?.title = "quit"
             
           //  optionAbutton.backgroundColor = UIColor.whiteColor()
-            optionAbutton.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
-            optionBbutton.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
-            optionCbutton.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
-            optionDbutton.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
-            questionText.textColor = UIColor.orangeColor()
-            questionNoLabel.textColor = UIColor.orangeColor()
+            optionAbutton.setTitleColor(UIColor.orange, for: UIControlState())
+            optionBbutton.setTitleColor(UIColor.orange, for: UIControlState())
+            optionCbutton.setTitleColor(UIColor.orange, for: UIControlState())
+            optionDbutton.setTitleColor(UIColor.orange, for: UIControlState())
+            questionText.textColor = UIColor.orange
+            questionNoLabel.textColor = UIColor.orange
             
             questionText.numberOfLines = 0
             questionNoLabel.numberOfLines = 0
@@ -64,17 +64,17 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
             {
                 let msgData = ShareController.sharedInstance.getMessageData()
                 
-                let jsonData = msgData.dataUsingEncoding(NSUTF8StringEncoding)
+                let jsonData = msgData.data(using: String.Encoding.utf8.rawValue)
                 do {
-                let json: AnyObject? = try NSJSONSerialization.JSONObjectWithData(jsonData!, options:NSJSONReadingOptions.MutableContainers)
+                let json = try JSONSerialization.jsonObject(with: jsonData!, options:JSONSerialization.ReadingOptions.mutableContainers)
                 let jsonDict = json as? NSDictionary
                 if let jsonDict = jsonDict{
                     questionText.text = jsonDict["question"] as? String
                    
-                    optionAbutton.setTitle(jsonDict["option1"] as? String, forState: UIControlState.Normal)
-                    optionBbutton.setTitle(jsonDict["option2"] as? String, forState: UIControlState.Normal)
-                    optionCbutton.setTitle(jsonDict["option3"] as? String, forState: UIControlState.Normal)
-                    optionDbutton.setTitle(jsonDict["option4"] as? String, forState: UIControlState.Normal)
+                    optionAbutton.setTitle(jsonDict["option1"] as? String, for: UIControlState())
+                    optionBbutton.setTitle(jsonDict["option2"] as? String, for: UIControlState())
+                    optionCbutton.setTitle(jsonDict["option3"] as? String, for: UIControlState())
+                    optionDbutton.setTitle(jsonDict["option4"] as? String, for: UIControlState())
                 /*    var questionNO:String = ""
                       questionNO  = (jsonDict["questionNo"] as? String)!
                    questionNO = "Question No. " + questionNO
@@ -98,22 +98,22 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewWillDisappear(animated: Bool)
+    override func viewWillDisappear(_ animated: Bool)
     {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: "scoreRecieved", object: nil) //1234
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: "questionRecieved", object: nil) //1234
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "scoreRecieved"), object: nil) //1234
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "questionRecieved"), object: nil) //1234
     //    NSNotificationCenter.defaultCenter().removeObserver(self, name: "lastQuestionRecieved", object: nil) //1234
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: "sessionEnd", object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: "sendAnswer", object: nil) //1234 //1234
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "sessionEnd"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "sendAnswer"), object: nil) //1234 //1234
         
     }
     
-    func leftNavButtonClick(sender:UIButton!)
+    func leftNavButtonClick(_ sender:UIButton!)
     {
         let  dic:NSDictionary  = ["session":"end"]
         do {
-            let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-            let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+            let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+            let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
             print("data is \(dataString)")
             ShareController.sharedInstance.SendToHost(dataString!)
         
@@ -127,22 +127,22 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
     }
     
 
-    func updateQuestion(notification: NSNotification!)
+    func updateQuestion(_ notification: Notification!)
     {
-        self.view.userInteractionEnabled = true
+        self.view.isUserInteractionEnabled = true
         let msgData = ShareController.sharedInstance.getMessageData()
-        let jsonData = msgData.dataUsingEncoding(NSUTF8StringEncoding)
+        let jsonData = msgData.data(using: String.Encoding.utf8.rawValue)
         do {
-            let json: AnyObject? = try NSJSONSerialization.JSONObjectWithData(jsonData!, options:NSJSONReadingOptions.MutableContainers)
+            let json = try JSONSerialization.jsonObject(with: jsonData!, options:JSONSerialization.ReadingOptions.mutableContainers)
             let jsonDict = json as? NSDictionary
             if let jsonDict = jsonDict
             {
             questionText.text = jsonDict["question"] as? String
                 
-            optionAbutton.setTitle(jsonDict["option1"] as? String, forState: UIControlState.Normal)
-            optionBbutton.setTitle(jsonDict["option2"] as? String, forState: UIControlState.Normal)
-            optionCbutton.setTitle(jsonDict["option3"] as? String, forState: UIControlState.Normal)
-            optionDbutton.setTitle(jsonDict["option4"] as? String, forState: UIControlState.Normal)
+            optionAbutton.setTitle(jsonDict["option1"] as? String, for: UIControlState())
+            optionBbutton.setTitle(jsonDict["option2"] as? String, for: UIControlState())
+            optionCbutton.setTitle(jsonDict["option3"] as? String, for: UIControlState())
+            optionDbutton.setTitle(jsonDict["option4"] as? String, for: UIControlState())
             var questionNO = jsonDict["questionNo"] as? String
             questionNO = "Question No. " + questionNO!
             questionNoLabel.text = questionNO
@@ -154,21 +154,21 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
         }
     }
     
-    func scoreCard(notification : NSNotification)
+    func scoreCard(_ notification : Notification)
     {
        // let score = ShareController.sharedInstance.getScore()
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let scoreBoardViewController = storyBoard.instantiateViewControllerWithIdentifier("scoreBoardView") as! scoreBoard
-        self.showViewController(scoreBoardViewController, sender: scoreBoardViewController)
+        let scoreBoardViewController = storyBoard.instantiateViewController(withIdentifier: "scoreBoardView") as! scoreBoard
+        self.show(scoreBoardViewController, sender: scoreBoardViewController)
         
     }
     
-    func showplayerTypeonSessionEnd(notification: NSNotification!)
+    func showplayerTypeonSessionEnd(_ notification: Notification!)
     {
         var clientName = ShareController.sharedInstance.getClientName()
         clientName = clientName + " has disconnected"
-        let alertView = UIAlertController(title: "QuizApp", message: clientName, preferredStyle: .Alert)
-        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default){
+        let alertView = UIAlertController(title: "QuizApp", message: clientName, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.default){
             UIAlertAction in
             NSLog("OK Pressed")
             let viewControllers:[UIViewController] = self.navigationController!.viewControllers
@@ -176,22 +176,22 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
         }
         
         alertView.addAction(okAction)
-        presentViewController(alertView, animated: true, completion: nil)
+        present(alertView, animated: true, completion: nil)
        
     }
     
     
-    func sendResponse(notification : NSNotification!)
+    func sendResponse(_ notification : Notification!)
     {
-        self.view.userInteractionEnabled = false
+        self.view.isUserInteractionEnabled = false
          currentSelectedButton = radioButtonController?.selectedButton()
         if(currentSelectedButton == optionAbutton)
         {
             let  dic:NSDictionary  = ["answer":"1"]
             
             do {
-                let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-            let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+                let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+            let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
             print("data is \(dataString)")
             ShareController.sharedInstance.SendToHost(dataString!)
             }
@@ -205,8 +205,8 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
             let  dic:NSDictionary  = ["answer":"2"]
             
             do {
-                let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-                let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+                let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+                let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
                 print("data is \(dataString)")
                 ShareController.sharedInstance.SendToHost(dataString!)
             }
@@ -219,8 +219,8 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
         {
             let  dic:NSDictionary  = ["answer":"3"]
             do {
-            let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-                let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+            let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+                let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
                 print("data is \(dataString)")
                 ShareController.sharedInstance.SendToHost(dataString!)
             }
@@ -233,8 +233,8 @@ class QuestionScreenViewController : UIViewController, SSRadioButtonControllerDe
         {
             let  dic:NSDictionary  = ["answer":"4"]
             do {
-                let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-                let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+                let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+                let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
                 print("data is \(dataString)")
                 ShareController.sharedInstance.SendToHost(dataString!)
             }

@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-import MSF
+import SmartView
 
 class TVListViewController : UIViewController, UITableViewDelegate, UITableViewDataSource
 {
@@ -19,7 +19,7 @@ class TVListViewController : UIViewController, UITableViewDelegate, UITableViewD
     
     @IBOutlet weak var allTVNetworkView: UITableView!
     
-    let activityIndicatorView:UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+    let activityIndicatorView:UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,44 +30,42 @@ class TVListViewController : UIViewController, UITableViewDelegate, UITableViewD
         allTVNetworkView.delegate = self
         allTVNetworkView.dataSource = self
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "channelConnected:", name: "channelGetsConnected", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(TVListViewController.channelConnected(_:)), name: NSNotification.Name(rawValue: "channelGetsConnected"), object: nil)
         
         self.navigationItem.title = "Quiz App"
         
         
-        activityIndicatorView.frame = CGRectMake(50, 300, 10, 10)
+        activityIndicatorView.frame = CGRect(x: 50, y: 300, width: 10, height: 10)
         activityIndicatorView.center = self.view.center
         self.view.addSubview(activityIndicatorView)
         
-        let buttonBack: UIButton = UIButton(type: UIButtonType.Custom)
-        buttonBack.frame = CGRectMake(5, 5, 30, 30)
-        buttonBack.setImage(UIImage(named:"backImage.png"), forState:UIControlState.Normal)
-        buttonBack.addTarget(self, action: "leftNavButtonClick:", forControlEvents: UIControlEvents.TouchUpInside)
+        let buttonBack: UIButton = UIButton(type: UIButtonType.custom)
+        buttonBack.frame = CGRect(x: 5, y: 5, width: 30, height: 30)
+        buttonBack.setImage(UIImage(named:"backImage.png"), for:UIControlState())
+        buttonBack.addTarget(self, action: #selector(TVListViewController.leftNavButtonClick(_:)), for: UIControlEvents.touchUpInside)
         
-        let buttonRefresh: UIButton = UIButton(type: UIButtonType.Custom)
-        buttonRefresh.frame = CGRectMake(300, 5, 30, 30)
-        buttonRefresh.setImage(UIImage(named:"refresh_Image.png"), forState:UIControlState.Normal)
-        buttonRefresh.addTarget(self, action: "rightNavButtonClick:", forControlEvents: UIControlEvents.TouchUpInside)
+        let buttonRefresh: UIButton = UIButton(type: UIButtonType.custom)
+        buttonRefresh.frame = CGRect(x: 300, y: 5, width: 30, height: 30)
+        buttonRefresh.setImage(UIImage(named:"refresh_Image.png"), for:UIControlState())
+        buttonRefresh.addTarget(self, action: #selector(TVListViewController.rightNavButtonClick(_:)), for: UIControlEvents.touchUpInside)
         
         let leftBarButtonItem: UIBarButtonItem = UIBarButtonItem(customView: buttonBack)
-        self.navigationItem.setLeftBarButtonItem(leftBarButtonItem, animated: true)
+        self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
         
         let rightBarButtonItem: UIBarButtonItem = UIBarButtonItem(customView: buttonRefresh)
-        self.navigationItem.setRightBarButtonItem(rightBarButtonItem, animated: true)
+        self.navigationItem.setRightBarButton(rightBarButtonItem, animated: true)
         
-        
-        
-       allTVNetworkView.backgroundView = UIImageView(image: UIImage(named:"back1.jpg"))
+        allTVNetworkView.backgroundView = UIImageView(image: UIImage(named:"back1.jpg"))
     }
     
-    func leftNavButtonClick(sender:UIButton!)
+    func leftNavButtonClick(_ sender:UIButton!)
     {
-        self.navigationController?.popViewControllerAnimated(true)
+        self.navigationController?.popViewController(animated: true)
         
        // ShareController.sharedInstance.disconnect()
     }
     
-    func rightNavButtonClick(sender:UIButton!)
+    func rightNavButtonClick(_ sender:UIButton!)
     {
         if (ShareController.sharedInstance.services.count != 0)
         {
@@ -85,9 +83,9 @@ class TVListViewController : UIViewController, UITableViewDelegate, UITableViewD
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
-        //ShareController.sharedInstance.searchServices()
+//        ShareController.sharedInstance.searchServices()
         
         didFindServiceObserver =  ShareController.sharedInstance.search.on(MSDidFindService) { [unowned self] notification in
             self.allTVNetworkView.reloadData()
@@ -99,13 +97,13 @@ class TVListViewController : UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         ShareController.sharedInstance.search.off(didFindServiceObserver!)
         ShareController.sharedInstance.search.off(didRemoveServiceObserver!)
        // ShareController.sharedInstance.clearServices()
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //        if ShareController.sharedInstance.search.isSearching {
         //            return ShareController.sharedInstance.services.count
         //        } else {
@@ -116,47 +114,49 @@ class TVListViewController : UIViewController, UITableViewDelegate, UITableViewD
         return ShareController.sharedInstance.services.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("DeviceCell", forIndexPath: indexPath) 
-        cell.backgroundView = UIImageView(image: UIImage(named:"back1.jpg"))
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        print("table view cell for row at")
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath)
         cell.textLabel?.text = ShareController.sharedInstance.services[indexPath.row].name
-        cell.textLabel?.textColor = UIColor.orangeColor()
+        cell.textLabel?.textColor = UIColor.orange
+        cell.backgroundView = UIImageView(image: UIImage(named:"back1.jpg"))
+        selectedTVName = ShareController.sharedInstance.services[indexPath.row].name
 
         cell.backgroundColor = UIColor(patternImage: UIImage(named: "back1.jpg")!)
-        selectedTVName = ShareController.sharedInstance.services[indexPath.row].name
-                NSLog("Hello %@!", ShareController.sharedInstance.services[indexPath.row].name)
+        NSLog("Hello %@!", ShareController.sharedInstance.services[indexPath.row].name)
         
-       
         return cell
     }
     
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Connect to TV"
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if (ShareController.sharedInstance.search.isSearching)
         {
-            ShareController.sharedInstance.launchApp("quizApp", index: indexPath.row)
+            ShareController.sharedInstance.launchApp("quizApp.17", index: indexPath.row)
             
             self.activityIndicatorView.startAnimating()
         }
     }
     
-    func channelConnected(notification: NSNotification!) {
+    func channelConnected(_ notification: Notification!) {
         
         self.activityIndicatorView.stopAnimating()
         ShareController.sharedInstance.clearServices()
         self.allTVNetworkView.reloadData()
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let playerTypeViewController = storyBoard.instantiateViewControllerWithIdentifier("PlayerTypeView") as! PlayerTypeViewController
+        let playerTypeViewController = storyBoard.instantiateViewController(withIdentifier: "PlayerTypeView") as! PlayerTypeViewController
         self.navigationController?.pushViewController(playerTypeViewController, animated: true)
         
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         
     }

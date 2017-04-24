@@ -21,29 +21,31 @@ class FirstViewController : UIViewController , UITextFieldDelegate, UINavigation
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        playButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        playButton.backgroundColor = UIColor.whiteColor()
-        playButton.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
+        playButton.setTitleColor(UIColor.white, for: UIControlState())
+        playButton.backgroundColor = UIColor.white
+        playButton.setTitleColor(UIColor.orange, for: UIControlState())
         playButton.layer.cornerRadius = 8
         
         let blackcolor : UIColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
-        usernameText.layer.borderColor = blackcolor.CGColor
+        usernameText.layer.borderColor = blackcolor.cgColor
         usernameText.layer.borderWidth = 2
         usernameText.layer.cornerRadius = 8
 
-        aboutButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        aboutButton.backgroundColor = UIColor.whiteColor()
+        aboutButton.setTitleColor(UIColor.white, for: UIControlState())
+        aboutButton.backgroundColor = UIColor.white
         aboutButton.layer.cornerRadius = 8
-        aboutButton.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
-        UsernameLabel.textColor = UIColor.whiteColor()
+        aboutButton.setTitleColor(UIColor.orange, for: UIControlState())
+        UsernameLabel.textColor = UIColor.white
         
-        let titleDict: [String : AnyObject] = [NSForegroundColorAttributeName: UIColor.orangeColor()]
+        let titleDict: [String : AnyObject] = [NSForegroundColorAttributeName: UIColor.orange]
         self.navigationController!.navigationBar.titleTextAttributes = titleDict
         
         self.usernameText.delegate = self
         self.navigationItem.title = "Quiz App"
         
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "back1.jpg")!)
+        
+       // ShareController.sharedInstance.searchServices()
     }
     
     override func didReceiveMemoryWarning() {
@@ -52,35 +54,37 @@ class FirstViewController : UIViewController , UITextFieldDelegate, UINavigation
         // Dispose of any resources that can be recreated.
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         
     }
     
-    @IBAction func playButtonAction(sender: AnyObject) {
+    @IBAction func playButtonAction(_ sender: AnyObject) {
+        
+        ShareController.sharedInstance.searchServices()
         
         if(usernameText.text!.isEmpty != true)
         {
             ShareController.sharedInstance.setUserName(usernameText.text!)
             
             //Start searching the services
-            ShareController.sharedInstance.searchServices()
+           // ShareController.sharedInstance.searchServices()
             
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let tvViewController = storyBoard.instantiateViewControllerWithIdentifier("AllTVNetworkView") as! TVListViewController
+            let tvViewController = storyBoard.instantiateViewController(withIdentifier: "AllTVNetworkView") as! TVListViewController
             self.navigationController?.pushViewController(tvViewController, animated: true)
         }
         else
         {
-            let alertView = UIAlertController(title: "QuizApp", message: "Please enter your name to login!!", preferredStyle: .Alert)
+            let alertView = UIAlertController(title: "QuizApp", message: "Please enter your name to login!!", preferredStyle: .alert)
             
-            alertView.addAction(UIAlertAction(title: "Ok", style: .Default, handler: nil))
+            alertView.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             
-            presentViewController(alertView, animated: true, completion: nil)
+            present(alertView, animated: true, completion: nil)
         }
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
         usernameText.becomeFirstResponder()
         usernameText.resignFirstResponder()

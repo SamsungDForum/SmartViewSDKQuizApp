@@ -8,11 +8,12 @@
 
 import Foundation
 import AssetsLibrary
-import MSF
+import SmartView
 
 
 class ShareController : ServiceSearchDelegate, ChannelDelegate
 {
+    static let sharedInstance = ShareController()
     let search = Service.search()
     var app: Application?
     var appURL: String = "http://prod-multiscreen-examples.s3-website-us-west-1.amazonaws.com/examples/photoshare/tv/"
@@ -21,27 +22,16 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
     var isConnecting: Bool = false
     var services = [Service]()
    
-    var imageByte:NSData?
+    var imageByte:Data?
     var userNameText : String = ""
     var playerType : String = ""
     var playerSelected: Bool = false
-    var defaultImage:NSData?
+    var defaultImage:Data?
     var refreshOrStop:Int?
     var msgString :NSString = ""
      var score :String = ""
     var clientName:String = ""
     var connectionType:Bool = false
-    class var sharedInstance : ShareController {
-        struct Static {
-            static var onceToken : dispatch_once_t = 0
-            static var instance : ShareController? = nil
-        }
-        
-        dispatch_once(&Static.onceToken) {
-            Static.instance = ShareController()
-        }
-        return Static.instance!
-    }
     
     init () {
         search.delegate = self
@@ -53,7 +43,7 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
         //   updateCastStatus()
     }
     
-    func connect(service: Service) {
+    func connect(_ service: Service) {
         search.stop()
         
         if (app != nil)
@@ -62,7 +52,7 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
            
         }
         
-        app = service.createApplication(NSURL(string: appURL)!,channelURI: channelId, args: nil)
+        app = service.createApplication(URL(string: appURL)! as AnyObject,channelURI: channelId, args: nil)
         app!.delegate = self
       //  app!.connectionTimeout = 5
         self.isConnecting = true
@@ -70,52 +60,53 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
         app!.connect()
     }
     
-    func stopSearch(status: Int)
+    func stopSearch(_ status: Int)
     {
         refreshOrStop = status
         search.stop()
     }
     
-   @objc func onClientConnect(client: ChannelClient)
+   @objc func onClientConnect(_ client: ChannelClient)
     {
-        NSNotificationCenter.defaultCenter().postNotificationName("clientGetsConnected", object: self, userInfo: ["addClient":client])
-        
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "clientGetsConnected"), object: self, userInfo: ["addClient":client])
     }
     
     ///  :param: client: The Client that just disconnected from the Channel
-    @objc func onClientDisconnect(client: ChannelClient)
+    @objc func onClientDisconnect(_ client: ChannelClient)
     {
-          NSNotificationCenter.defaultCenter().postNotificationName("clientGetsDisconnected", object: self, userInfo: ["removeClient":client])
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "clientGetsDisconnected"), object: self, userInfo: ["removeClient":client])
     }
     
-    @objc func onConnect(client: ChannelClient?, error: NSError?) {
+    @objc func onConnect(_ client: ChannelClient?, error: NSError?) {
         
         NSLog("CLIENT CONNECTED!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         
-        NSNotificationCenter.defaultCenter().postNotificationName("channelGetsConnected", object: self, userInfo: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "channelGetsConnected"), object: self, userInfo: nil)
     }
     
-    @objc func onDisconnect(client: ChannelClient?, error: NSError?) {
+    @objc func onDisconnect(_ client: ChannelClient?, error: NSError?) {
         print(error)
         search.start()
         app = nil
         isConnecting = false
         //   updateCastStatus()
-        NSNotificationCenter.defaultCenter().postNotificationName("channelGetsDisConnected", object: self, userInfo: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "channelGetsDisConnected"), object: self, userInfo: nil)
     }
     
-     @objc func onMessage(message: Message)
+     @objc func onMessage(_ message: Message)
     {
         NSLog("Message Received")
         print("message is \(message.data) from \(message.from)")
         let item:NSString = message.data as! NSString
         msgString = item
         
-        let jsonData = item.dataUsingEncoding(NSUTF8StringEncoding)
+        let jsonData = item.data(using: String.Encoding.utf8.rawValue)
         
         do {
-            let json: AnyObject? = try NSJSONSerialization.JSONObjectWithData(jsonData!, options:NSJSONReadingOptions.MutableContainers)
         
+            let json = try JSONSerialization.jsonObject(with: jsonData!, options:JSONSerialization.ReadingOptions.mutableContainers)
+
+            
         if let jsonDict = json as? NSDictionary{
             
             if(jsonDict["question"] != nil)
@@ -127,13 +118,13 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
                     NSNotificationCenter.defaultCenter().postNotificationName("lastQuestionRecieved", object: self, userInfo: nil)
                 }
                 else{*/
-                NSNotificationCenter.defaultCenter().postNotificationName("questionRecieved", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "questionRecieved"), object: self, userInfo: nil)
               //  }
             }
             else if(jsonDict["response"] != nil)
             {
                 
-                NSNotificationCenter.defaultCenter().postNotificationName("sendAnswer", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "sendAnswer"), object: self, userInfo: nil)
                 
             }
       
@@ -141,7 +132,7 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
             {
                 
                 score = (jsonDict["Score"] as? String)!
-                NSNotificationCenter.defaultCenter().postNotificationName("scoreRecieved", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "scoreRecieved"), object: self, userInfo: nil)
                 
             }
             else if(jsonDict["playerType"] != nil)
@@ -150,51 +141,51 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
                 {
                 clientName = (jsonDict["clientName"] as? String)!
                
-                NSNotificationCenter.defaultCenter().postNotificationName("MultiplayerRequest", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "MultiplayerRequest"), object: self, userInfo: nil)
                }
                 
             }
             else if(jsonDict["multiPlayer"] as? String == "yes")
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("MultiplayerQuestionRecieved", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "MultiplayerQuestionRecieved"), object: self, userInfo: nil)
                 playerSelected = true
             }
             else if(jsonDict["multiPlayer"] as? String == "no")
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("MultiplayerNORecieved", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "MultiplayerNORecieved"), object: self, userInfo: nil)
                 playerSelected = true
             }
             else if(jsonDict["disconnect"] as? String == "true")
             {
                    clientName = (jsonDict["clientName"] as? String)!
-                   NSNotificationCenter.defaultCenter().postNotificationName("Disconnected", object: self, userInfo: nil)
+                   NotificationCenter.default.post(name: Notification.Name(rawValue: "Disconnected"), object: self, userInfo: nil)
                 
             }
             else if(jsonDict["session"] as? String == "end")
             {
                 clientName = (jsonDict["clientName"] as? String)!
-                NSNotificationCenter.defaultCenter().postNotificationName("sessionEnd", object: self, userInfo: nil)
-                NSNotificationCenter.defaultCenter().postNotificationName("sessionEndonScore", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "sessionEnd"), object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "sessionEndonScore"), object: self, userInfo: nil)
             }
             else if(jsonDict["connectionState"] as? String == "buzy")
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("stateBusy", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "stateBusy"), object: self, userInfo: nil)
             }
             else if(jsonDict["connectionState"] as? String == "available")
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("stateAvailable", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "stateAvailable"), object: self, userInfo: nil)
             }
             else if(jsonDict["finish"] as? String == "Done")
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("DonePlaying", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "DonePlaying"), object: self, userInfo: nil)
             }
             else if(jsonDict["changeCategory"] as? String == "yes")
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("changeCategory", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "changeCategory"), object: self, userInfo: nil)
             }
             else if(jsonDict["playAgain"] as? String == "playAgain")
             {
-                NSNotificationCenter.defaultCenter().postNotificationName("playAgainRecieved", object: self, userInfo: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "playAgainRecieved"), object: self, userInfo: nil)
             }
             
         }
@@ -206,7 +197,7 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
         
     }
     
-    @objc func onData(message: Message, payload: NSData)
+    @objc func onData(_ message: Message, payload: Data)
     {
         NSLog("Data Received")
         print("data is \(message.data) from \(message.from) with payload \(payload)")
@@ -226,19 +217,20 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
     //    {
     //
     //    }
-    @objc func onServiceFound(service: Service) {
+    func onServiceFound(_ service: SmartView.Service)
+    {
         services.append(service)
         //    updateCastStatus()
     }
     
-    @objc func onServiceLost(service: Service) {
-        removeObject(&services,object: service)
+    @objc func onServiceLost(_ service: SmartView.Service)
+    {
+        _ = removeObject(&services,object: service)
         //  updateCastStatus()
     }
     @objc func clearServices()
     {
-        services.removeAll(keepCapacity: true)
-        
+        services.removeAll(keepingCapacity: true)
     }
     
     @objc func onStop() {
@@ -250,43 +242,39 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
         }
         if (refreshOrStop == 1)
         {
-            services.removeAll(keepCapacity: false)
+            services.removeAll(keepingCapacity: false)
         }
     }
     
-    func removeObject<T:Equatable>(inout arr:Array<T>, object:T) -> T? {
-        if let found = arr.indexOf(object) {
-            return arr.removeAtIndex(found)
+    func removeObject<T:Equatable>(_ arr:inout Array<T>, object:T) -> T? {
+        if let found = arr.index(of: object) {
+            return arr.remove(at: found)
         }
         return nil
     }
     
-    func launchApp(appId: String, index: Int)
+    func launchApp(_ appId: String, index: Int)
     {
         let tempService = services[index] as Service
         
-        
-        app = tempService.createApplication(appId, channelURI: channelId, args:nil)
+        app = tempService.createApplication(appId as AnyObject, channelURI: channelId, args:nil)
         app?.delegate = self
         self.isConnecting = true
         // connect to the Tv using username text as attribute
         app!.connect( ["name":userNameText])
-    
     }
     
-    func launchAppWithURL(appURL: String, index:Int, timeOut: Int)
+    func launchAppWithURL(_ appURL: String, index:Int, timeOut: Int)
     {
         let tempService = services[index] as Service
         
-        app = tempService.createApplication(NSURL(string: appURL)!, channelURI: channelId, args: nil)
+        app = tempService.createApplication(URL(string: appURL)! as AnyObject, channelURI: channelId, args: nil)
         
         app!.delegate = self
         
- 
         self.isConnecting = true
         
         app!.connect()
-        
     }
     
     func TerminateApp() -> Int
@@ -302,7 +290,7 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
         return running
     }
     
-    func SendToHost(msgText: String)
+    func SendToHost(_ msgText: String)
     {
         if(app != nil)
         {
@@ -314,41 +302,39 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
             }
             else
             {
-                app!.publish(event: "say", message: msgText ,target: MessageTarget.Host.rawValue)
+                app!.publish(event: "say", message: msgText as AnyObject? ,target: MessageTarget.Host.rawValue as AnyObject)
             }
 
-                   
-         
         }
     }
     
-    func SendToHost(msgtext:NSString)
+    func SendToHost(_ msgtext:NSString)
     {
         
         if(app != nil)
         {
-            app!.publish(event: "say", message: msgtext ,target: MessageTarget.Host.rawValue)
+            app!.publish(event: "say", message: msgtext ,target: MessageTarget.Host.rawValue as AnyObject)
         }
         
     }
     
-    func SendToAll(msgText: String)
+    func SendToAll(_ msgText: String)
     {
         if(app != nil)
         {
-            app?.publish(event: msgText, message: "hello")
+            app?.publish(event: msgText, message: "hello" as AnyObject?)
         }
     }
     
-    func SendBroadcast(msgText: String)
+    func SendBroadcast(_ msgText: String)
     {
         if(app != nil)
         {
-            app!.publish(event: "say", message: "Hello All of you", target: MessageTarget.Broadcast.rawValue)
+            app!.publish(event: "say", message: "Hello All of you" as AnyObject?, target: MessageTarget.Broadcast.rawValue as AnyObject)
         }
     }
     
-    func SendToClient(msgText: String, clientID :String)
+    func SendToClient(_ msgText: String, clientID :String)
     {
         if(app != nil)
         {
@@ -356,13 +342,13 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
             let dic = ["Message":msgText, "ClientID":clientID]
             
             do {
-                let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
+                let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
             
-                let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+                let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
 
                 print("data is \(dataString)")
             
-                app!.publish(event: "say", message: dataString , target: MessageTarget.Host.rawValue)
+                app!.publish(event: "say", message: dataString , target: MessageTarget.Host.rawValue as AnyObject)
             }
             catch let error as NSError
             {
@@ -373,11 +359,11 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
     }
     
     
-    func SendToManyClients(msgText: String)
+    func SendToManyClients(_ msgText: String)
     {
         if(app != nil)
         {
-            app!.publish(event: msgText, message: "Hello Client 1", target: app!.getClients())
+            app!.publish(event: msgText, message: "Hello Client 1" as AnyObject?, target: app!.getClients() as AnyObject)
         }
     }
     
@@ -413,18 +399,18 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
         return test
     }
     
-    func getImageData(dataofimage : NSData)
+    func getImageData(_ dataofimage : Data)
     {
         imageByte = dataofimage
         
     }
-    func setUserName(userName : String)
+    func setUserName(_ userName : String)
     {
         userNameText = userName
         
     }
     
-    func setPlayerType(plyertype : String)
+    func setPlayerType(_ plyertype : String)
     {
         playerType = plyertype
      
@@ -439,11 +425,11 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
         {
             app?.disconnect()
             
-            services.removeAll(keepCapacity: false)
+            services.removeAll(keepingCapacity: false)
         }
-
     }
-    func disconnect(connectiontype :Bool)
+    
+    func disconnect(_ connectiontype :Bool)
     {
         connectionType = connectiontype
         search.stop()
@@ -452,10 +438,10 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
         {
             app?.disconnect()
             
-            services.removeAll(keepCapacity: false)
+            services.removeAll(keepingCapacity: false)
         }
-        
     }
+    
     func  getMessageData() ->NSString
     {
         
@@ -464,11 +450,11 @@ class ShareController : ServiceSearchDelegate, ChannelDelegate
     func  getScore( ) ->NSString
     {
         
-        return score
+        return score as NSString
     }
     func getPlayerType() ->NSString
     {
-        return playerType
+        return playerType as NSString
     }
     func getClientName() ->String
     {

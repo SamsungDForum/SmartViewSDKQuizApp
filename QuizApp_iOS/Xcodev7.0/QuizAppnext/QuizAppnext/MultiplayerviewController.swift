@@ -25,29 +25,29 @@ class MultiplayerviewController : UIViewController
         self.navigationItem.title = "Quiz App"
         clientName.text = ShareController.sharedInstance.getClientName()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "showCategoryPage:", name: "changeCategory", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(MultiplayerviewController.showCategoryPage(_:)), name: NSNotification.Name(rawValue: "changeCategory"), object: nil)
         
         self.view.backgroundColor = UIColor(patternImage: UIImage(named: "back1.jpg")!)
         
         
-        yesbutton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        yesbutton.backgroundColor = UIColor.whiteColor()
+        yesbutton.setTitleColor(UIColor.white, for: UIControlState())
+        yesbutton.backgroundColor = UIColor.white
         yesbutton.layer.cornerRadius = 8
-        yesbutton.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
+        yesbutton.setTitleColor(UIColor.orange, for: UIControlState())
         
-        nobutton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        nobutton.backgroundColor = UIColor.whiteColor()
+        nobutton.setTitleColor(UIColor.white, for: UIControlState())
+        nobutton.backgroundColor = UIColor.white
         nobutton.layer.cornerRadius = 8
-        nobutton.setTitleColor(UIColor.orangeColor(), forState: UIControlState.Normal)
-        playingqueslabel.textColor = UIColor.orangeColor()
+        nobutton.setTitleColor(UIColor.orange, for: UIControlState())
+        playingqueslabel.textColor = UIColor.orange
         
-        let buttonBack: UIButton = UIButton(type: UIButtonType.Custom)
-        buttonBack.frame = CGRectMake(5, 5, 30, 30)
-        buttonBack.setImage(UIImage(named:"backImage.png"), forState:UIControlState.Normal)
-        buttonBack.addTarget(self, action: "leftNavButtonClick:", forControlEvents: UIControlEvents.TouchUpInside)
+        let buttonBack: UIButton = UIButton(type: UIButtonType.custom)
+        buttonBack.frame = CGRect(x: 5, y: 5, width: 30, height: 30)
+        buttonBack.setImage(UIImage(named:"backImage.png"), for:UIControlState())
+        buttonBack.addTarget(self, action: #selector(MultiplayerviewController.leftNavButtonClick(_:)), for: UIControlEvents.touchUpInside)
         
         let leftBarButtonItem = UIBarButtonItem(customView: buttonBack)
-        self.navigationItem.setLeftBarButtonItem(leftBarButtonItem, animated: true)
+        self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
         self.navigationItem.leftBarButtonItem?.title = "quit"
     }
     
@@ -57,12 +57,12 @@ class MultiplayerviewController : UIViewController
         // Dispose of any resources that can be recreated.
     }
     
-    func leftNavButtonClick(sender:UIButton!)
+    func leftNavButtonClick(_ sender:UIButton!)
     {
         let  dic:NSDictionary  = ["multiPlayer":"no"]
         do {
-            let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-            let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+            let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+            let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
             print("data is \(dataString)")
             ShareController.sharedInstance.SendToHost(dataString!)
         
@@ -75,17 +75,17 @@ class MultiplayerviewController : UIViewController
             }
     }
     
-    @IBAction func multiplayerYesbuttonAction(sender: AnyObject)
+    @IBAction func multiplayerYesbuttonAction(_ sender: AnyObject)
     {
         let  dic:NSDictionary  = ["multiPlayer":"yes"]
         do {
-            let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-            let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+            let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+            let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
             print("data is \(dataString)")
             ShareController.sharedInstance.SendToHost(dataString!)
         
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let questionScreenViewController = storyBoard.instantiateViewControllerWithIdentifier("questionScreenView") as! QuestionScreenViewController
+            let questionScreenViewController = storyBoard.instantiateViewController(withIdentifier: "questionScreenView") as! QuestionScreenViewController
             self.navigationController?.pushViewController(questionScreenViewController, animated: true)
            }
             catch let error as NSError
@@ -94,12 +94,12 @@ class MultiplayerviewController : UIViewController
             }
     }
     
-    @IBAction func multiplayerNobuttonAction(sender: AnyObject)
+    @IBAction func multiplayerNobuttonAction(_ sender: AnyObject)
     {
         let  dic:NSDictionary  = ["multiPlayer":"no"]
         do {
-            let data =  try NSJSONSerialization.dataWithJSONObject(dic, options: NSJSONWritingOptions(rawValue: 0))
-        let dataString = NSString( data: data, encoding: NSUTF8StringEncoding )
+            let data =  try JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions(rawValue: 0))
+        let dataString = NSString( data: data, encoding: String.Encoding.utf8.rawValue )
         print("data is \(dataString)")
         ShareController.sharedInstance.SendToHost(dataString!)
         
@@ -112,7 +112,7 @@ class MultiplayerviewController : UIViewController
         }
     }
     
-    func showCategoryPage(notification:NSNotification)
+    func showCategoryPage(_ notification:Notification)
     {
         let viewControllers:[UIViewController] = self.navigationController!.viewControllers
         self.navigationController?.popToViewController(viewControllers[2], animated: true)
